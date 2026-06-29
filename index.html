@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Maintenance Log</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #2980b9; }
+        #logTable { width: 100%; margin-top: 30px; border-collapse: collapse; }
+        #logTable th, #logTable td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        #logTable th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Fleet Maintenance Log</h2>
+    
+    <div class="form-group">
+        <label for="plateNumber">Plate Number</label>
+        <input type="text" id="plateNumber" placeholder="e.g. ABC-1234" required>
+    </div>
+    <div class="form-group">
+        <label for="logDate">Maintenance Date</label>
+        <input type="date" id="logDate" required>
+    </div>
+    <div class="form-group">
+        <label for="mileage">Current Mileage</label>
+        <input type="number" id="mileage" placeholder="e.g. 45000" required>
+    </div>
+    <div class="form-group">
+        <label for="notes">Maintenance Performed</label>
+        <textarea id="notes" rows="3" placeholder="Oil change, tire rotation, etc." required></textarea>
+    </div>
+    <button id="submitBtn">Submit Log</button>
+
+    <table id="logTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Plate Number</th>
+                <th>Mileage</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody id="logBody">
+            <!-- Data will populate here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Import Supabase via CDN -->
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    // REPLACE THESE WITH YOUR SUPABASE CREDENTIALS
+    const supabaseUrl = 'https://kavgkpddqtrtilftqlno.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthdmdrcGRkcXRydGlsZnRxbG5vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2ODcwNDEsImV4cCI6MjA5ODI2MzA0MX0.P4GfeW29C2aSLts4oDXBeWeJjgzyHNJfiKUW3VMTEI8'
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Function to fetch and display logs
+    async function fetchLogs() {
+        const { data, error } = await supabase
+            .from('fleet_logs')
+            .select('*')
+            .order('log_date', { ascending: false })
+
+        if (error) {
+            console.error('Error fetching logs:', error)
+            return
+        }
+
+        const tbody = document.getElementById('logBody')
+        tbody.innerHTML = ''
+        data.forEach(log => {
+            const row = `<tr>
+                <td>${log.log_date}</td>
+                <td>${log.plate_number}</td>
+                <td>${log.mileage}</td>
+                <td>${log.maintenance_notes}</td>
+            </tr>`
+            tbody.innerHTML += row
+        })
+    }
+
+    // Function to submit a new log
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+        const plate_number = document.getElementById('plateNumber').value
+        const log_date = document.getElementById('logDate').value
+        const mileage = document.getElementById('mileage').value
+        const maintenance_notes = document.getElementById('notes').value
+
+        if(!plate_number || !log_date || !mileage || !maintenance_notes) {
+            alert("Please fill all fields."); return;
+        }
+
+        const { data, error } = await supabase
+            .from('fleet_logs')
+            .insert([{ plate_number, log_date, mileage, maintenance_notes }])
+
+        if (error) {
+            alert('Error saving log!')
+            console.error(error)
+        } else {
+            alert('Log saved successfully!')
+            fetchLogs() // Refresh table
+            
+            // Clear inputs
+            document.getElementById('plateNumber').value = ''
+            document.getElementById('logDate').value = ''
+            document.getElementById('mileage').value = ''
+            document.getElementById('notes').value = ''
+        }
+    })
+
+    // Load logs on page startup
+    fetchLogs()
+</script>
+
+</body>
+</html>
