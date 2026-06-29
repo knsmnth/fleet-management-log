@@ -33,7 +33,7 @@ export const LogTable: React.FC<LogTableProps> = ({ logs, isLoading, onDeleteLog
             <Text style={[styles.th, styles.colPlate]}>Plate</Text>
             <Text style={[styles.th, styles.colMileage]}>Mileage</Text>
             <Text style={[styles.th, styles.colNotes]}>Notes</Text>
-            <Text style={[styles.th, styles.colActions]}>Actions</Text>
+            <Text style={[styles.th, styles.colActions]}>Action</Text>
           </View>
 
           {/* Table Body */}
@@ -157,8 +157,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   colActions: {
-    width: 90,
+    width: 100,
     textAlign: 'center' as const,
+    paddingHorizontal: Theme.spacing.sm,
   },
   actionsCell: {
     alignItems: 'center',
