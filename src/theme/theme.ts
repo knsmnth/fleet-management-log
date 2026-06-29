@@ -1,0 +1,87 @@
+export const Theme = {
+  colors: {
+    bgMain: '#F7F9FB',
+    bgSurface: '#FFFFFF',
+    borderColor: '#C6C6CD',
+    textPrimary: '#191C1E',
+    textSecondary: '#45464D',
+    textMuted: '#8C9099',
+    primaryBlue: '#0051D5',
+    primaryBlueHover: '#0043b3',
+    success: '#10B981',
+    error: '#EF4444',
+    warning: '#F59E0B',
+    accentLight: '#E8F0FE',
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    xxl: 32,
+  },
+  borderRadius: {
+    sm: 4,
+    md: 8,
+    lg: 12,
+    round: 9999,
+  },
+  shadows: {
+    small: {
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    medium: {
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
+      elevation: 4,
+    },
+    large: {
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.12,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+  },
+  typography: {
+    h1: {
+      fontSize: 20,
+      fontWeight: '700' as const,
+      lineHeight: 28,
+    },
+    h2: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+      lineHeight: 24,
+    },
+    bodyLarge: {
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 20,
+    },
+    bodySmall: {
+      fontSize: 12,
+      fontWeight: '400' as const,
+      lineHeight: 16,
+    },
+    label: {
+      fontSize: 12,
+      fontWeight: '600' as const,
+      lineHeight: 16,
+      letterSpacing: 0.5,
+    },
+    caption: {
+      fontSize: 10,
+      fontWeight: '700' as const,
+      textTransform: 'uppercase' as const,
+      letterSpacing: 0.5,
+    },
+  },
+};
