@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Theme } from '../theme/theme';
 import { MaintenanceLog } from '../types';
+import { CalendarPicker } from './CalendarPicker';
 
 interface LogFormProps {
   onSubmit: (log: Omit<MaintenanceLog, 'id' | 'created_at'>) => Promise<void>;
@@ -32,6 +33,7 @@ export const LogForm: React.FC<LogFormProps> = ({ onSubmit }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -130,18 +132,40 @@ export const LogForm: React.FC<LogFormProps> = ({ onSubmit }) => {
       {/* Date */}
       <View style={styles.formGroup}>
         <Text style={styles.label}>Maintenance Date</Text>
-        <TextInput
-          style={[styles.input, errors.logDate ? styles.inputError : null]}
-          placeholder="YYYY-MM-DD"
-          placeholderTextColor={Theme.colors.textMuted}
-          value={logDate}
-          onChangeText={setLogDate}
-          {...(Platform.OS === 'web' ? { type: 'date' } as any : {})}
-        />
+        <View style={[
+          styles.dateInputContainer,
+          errors.logDate ? { borderColor: Theme.colors.error } : null
+        ]}>
+          <TextInput
+            style={[styles.input, styles.dateInput]}
+            placeholder="YYYY-MM-DD"
+            placeholderTextColor={Theme.colors.textMuted}
+            value={logDate}
+            onChangeText={setLogDate}
+            onFocus={() => setShowCalendar(true)}
+          />
+          <TouchableOpacity
+            style={styles.calendarButton}
+            onPress={() => setShowCalendar(true)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.calendarButtonText}>📅</Text>
+          </TouchableOpacity>
+        </View>
         {errors.logDate ? (
           <Text style={styles.errorText}>{errors.logDate}</Text>
         ) : null}
       </View>
+
+      <CalendarPicker
+        visible={showCalendar}
+        onClose={() => setShowCalendar(false)}
+        onSelectDate={(selectedDate) => {
+          setLogDate(selectedDate);
+          setErrors((prev) => ({ ...prev, logDate: '' }));
+        }}
+        selectedValue={logDate}
+      />
 
       {/* Mileage */}
       <View style={styles.formGroup}>
@@ -287,5 +311,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  dateInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Theme.colors.bgMain,
+    borderWidth: 1,
+    borderColor: Theme.colors.borderColor,
+    borderRadius: Theme.borderRadius.sm,
+  },
+  dateInput: {
+    flex: 1,
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+  },
+  calendarButton: {
+    paddingHorizontal: Theme.spacing.lg,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  calendarButtonText: {
+    fontSize: 16,
   },
 });
